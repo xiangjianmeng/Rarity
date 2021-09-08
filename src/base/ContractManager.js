@@ -1,4 +1,5 @@
 const Web3 = require('web3')
+const NumberUtils = require('./NumberUtils')
 
 const debug = () => { }
 // const debug = console.log
@@ -17,11 +18,52 @@ class ContractManager {
    * @param {*} provider ethereum provider, e.g. window.ethereum for metamask env
    * @param {String|null} contractAddress contract address
    * @param {Object|null} abi abi.json
+   * @param {Object|null} options {
+   *   transactionConfirmationBlocks: 1,
+   *   transactionBlockTimeout: 60,
+   *   transactionPollingTimeout: 480
+   * };
    */
-  constructor(provider, contractAddress, abi) {
+  constructor(provider, contractAddress, abi, options = {
+    transactionConfirmationBlocks: 1,
+    transactionBlockTimeout: 60,
+    transactionPollingTimeout: 480
+  }) {
     if (!provider) throw new Error('Provider is empty!')
-    this.web3 = new Web3(provider)
+    this.web3 = new Web3(provider, null, options)
     this.contract = (this.web3 && abi && contractAddress) ? new this.web3.eth.Contract(abi, contractAddress) : null
+  }
+
+  /**
+   * set gasPrice limit for transaction
+   * @param {*} limit gas price in wei
+   */
+  setGasPriceLimit(limit) {
+    this.setGasPriceCalculator(async (gasPriceArgs) => {
+      const price = this.gasPrice()
+      if (NumberUtils.gt(price, limit)) {
+        return -1 // abort
+      }
+      return price
+    })
+  }
+
+  /**
+   * @param {Function} calculator async function to calc gas price
+   *        args: gasPrice set by method.
+   *        return gas price for transaction,
+   *        return null to abort transaction
+   */
+  setGasPriceCalculator(calculator) {
+    this.gasPriceCalculator = calculator
+  }
+
+  /**
+   * https://web3js.readthedocs.io/en/v1.5.2/web3-eth.html#getgasprice
+   * @returns {String} current gas price in wei.
+   */
+  gasPrice() {
+    return this.web3.eth.getGasPrice()
   }
 
   /**
@@ -71,6 +113,19 @@ class ContractManager {
     const address = r.address
     this.account = address
     return address
+  }
+
+  /**
+   * https://learnblockchain.cn/docs/web3.js/web3-eth-accounts.html#create
+   * @param {*} count
+   * @returns [{address, privateKey, signTransaction, sign, encrypt}]
+   */
+  createAccounts(count) {
+    const accounts = []
+    for (let i = 0; i < count; ++i) {
+      accounts.push(this.web3.eth.accounts.create())
+    }
+    return accounts
   }
 
   /**
@@ -145,6 +200,7 @@ class ContractManager {
     this.checkContract()
     account = account || this.account
     if (!account) throw Error('Account is invalid, maybe call addAccount first!')
+    gasPrice = this.calcGasPrice(gasPrice)
     const r = await this.contract.methods[method](params).send({ from: account, gas, gasPrice, value })
     debug('write method =', method, 'result =', r)
     return r
@@ -176,9 +232,20 @@ class ContractManager {
    * }
    */
   async send(from, to, value, { gas } = { gas: 21000 }) {
+    gasPrice = this.calcGasPrice(gasPrice)
     from = from || this.account
     value = Web3.utils.toWei(value, 'ether')
     return this.web3.eth.sendTransaction({ from, to, value, gas })
+  }
+
+  calcGasPrice(gasPrice) {
+    if (this.gasPriceCalculator) {
+      gasPrice = await this.gasPriceCalculator(gasPrice)
+      if (!gasPrice) {
+        throw Error('Gas price is null, abort transaction')
+      }
+    }
+    return gasPrice
   }
 
   getWeb3() {

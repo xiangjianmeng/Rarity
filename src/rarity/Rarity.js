@@ -12,6 +12,7 @@ class Rariry extends ContractManager {
 
   constructor() {
     super(Providers.ftm(), CONTRACT_ADDRESS, ABI)
+    this.setGasPriceLimit(120e9) // 120Gwei
   }
 
   adventure(account, id) {
