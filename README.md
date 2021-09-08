@@ -2,7 +2,7 @@
 
 ## 使用方法
 
-1、在Ubuntu系统中运行install.sh安装依赖，如果失败了可以根据脚本里的内容手动安装
+1、在Ubuntu系统中运行 `./install.sh` 安装依赖，如果失败了可以根据脚本里的内容手动安装
 
 2、创建secrets目录，和src目录平级
 
@@ -25,9 +25,12 @@ https://ftmscan.com/address/0x123xxx456#tokentxnsErc721
 "0xac...","1630...","2021-09-05 13:00:00","0x0000000000000000000000000000000000000000","0x36...","0xce761d788df608bd21bdd59d6f4b54b2e27f25bb","00001","Rarity Manifested","RM"
 ```
 
-5、运行yarn startNow，可以立即执行一次adventure
+5、立即执行一次adventure：运行 `yarn startNow`
 
-6、运行start.sh启动，可每天凌晨12:00自动执行一次adventure。如有需要，可运行`pm2 log rarity`查看log。
+6、每天凌晨12:00自动执行一次adventure：
+- 启动：`./start.sh`
+- 停止：`pm2 stop rarity`
+- 查看Log：`pm2 log rarity`
 
 
 ## 说明
