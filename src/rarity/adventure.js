@@ -1,6 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const csv = require('csvtojson')
+const Promise = require('bluebird')
 const Rarity = require('./Rarity')
 const NumberUtils = require('../base/NumberUtils')
 
@@ -31,7 +32,7 @@ async function loadAccounts() {
   console.log('loadAccounts complete', AccountHeros)
 }
 
-async function adventure(account, id) {
+async function adventure(account, id, nonce = null) {
   console.log(`${id} adventure start (account ${account})`)
   try {
     const adventurers_log = await rarity.adventurers_log(id)
@@ -40,12 +41,12 @@ async function adventure(account, id) {
       console.log(`${id} adventure canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
       return
     }
-    await rarity.adventure(account, id)
+    await rarity.adventure(account, id, nonce)
     const { _xp, _level } = await rarity.summoner(id)
     const xp_required = await rarity.xp_required(_level)
     // console.log({ adventurers_log, _xp, _level, xp_required })
     if (NumberUtils.gte(_xp, xp_required)) {
-      await rarity.level_up(account, id)
+      await rarity.level_up(account, id, nonce)
       console.log(`${id} adventure level up`)
     }
     console.log(`${id} adventure complete`)
@@ -58,13 +59,17 @@ async function adventureAll() {
   console.log('adventureAll start')
   for (const { account, heros } of AccountHeros) {
     // run serial
-    for (const hero of heros) {
-      await adventure(account, hero)
-    }
+    // for (const hero of heros) {
+    //   await adventure(account, hero)
+    // }
     // run parallel
-    // await Promise.map(heros, hero => {
-    //   return adventure(account, hero)
-    // })
+    try {
+      await Promise.map(heros, (hero, index) => {
+        return adventure(account, hero, index)
+      })
+    } catch (e) {
+      console.error(`account ${account} adventure error`, e)
+    }
   }
   console.log('adventureAll complete')
 }

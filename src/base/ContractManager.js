@@ -196,12 +196,12 @@ class ContractManager {
    *   events: {}
    * }
    */
-  async write(method, params, account, { gas, gasPrice, value } = { gas: 90000 }) {
+  async write(method, params, account, { gas, gasPrice, value, nonce } = { gas: 90000 }) {
     this.checkContract()
     account = account || this.account
     if (!account) throw Error('Account is invalid, maybe call addAccount first!')
     gasPrice = this.calcGasPrice(gasPrice)
-    const r = await this.contract.methods[method](params).send({ from: account, gas, gasPrice, value })
+    const r = await this.contract.methods[method](params).send({ from: account, gas, gasPrice, value, nonce })
     debug('write method =', method, 'result =', r)
     return r
   }
@@ -231,11 +231,11 @@ class ContractManager {
    *   type: '0x2'
    * }
    */
-  async send(from, to, value, { gas } = { gas: 21000 }) {
+  async send(from, to, value, { gas, gasPrice, nonce } = { gas: 21000 }) {
     gasPrice = this.calcGasPrice(gasPrice)
     from = from || this.account
     value = Web3.utils.toWei(value, 'ether')
-    return this.web3.eth.sendTransaction({ from, to, value, gas })
+    return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }
 
   calcGasPrice(gasPrice) {

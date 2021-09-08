@@ -15,8 +15,8 @@ class Rariry extends ContractManager {
     this.setGasPriceLimit(120e9) // 120Gwei
   }
 
-  adventure(account, id) {
-    return this.write('adventure(uint256)', id, account)
+  adventure(account, id, nonce = null) {
+    return this.write('adventure(uint256)', id, account, { gas: 90000, nonce })
   }
 
   /**
@@ -44,8 +44,8 @@ class Rariry extends ContractManager {
     return this.read('xp_required(uint256)', current_level)
   }
 
-  level_up(account, id) {
-    return this.write('level_up(uint256)', id, account)
+  level_up(account, id, nonce = null) {
+    return this.write('level_up(uint256)', id, account, { gas: 90000, nonce })
   }
 }
 
