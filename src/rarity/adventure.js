@@ -59,17 +59,17 @@ async function adventureAll() {
   console.log('adventureAll start')
   for (const { account, heros } of AccountHeros) {
     // run serial
-    // for (const hero of heros) {
-    //   await adventure(account, hero)
-    // }
-    // run parallel
-    try {
-      await Promise.map(heros, (hero, index) => {
-        return adventure(account, hero, index)
-      })
-    } catch (e) {
-      console.error(`account ${account} adventure error`, e)
+    for (const hero of heros) {
+      await adventure(account, hero)
     }
+    // run parallel
+    // try {
+    //   await Promise.map(heros, (hero, index) => {
+    //     return adventure(account, hero, index)
+    //   }, { concurrency: 20 }) // max about 70 transactions in one ethereum block
+    // } catch (e) {
+    //   console.error(`account ${account} adventure error`, e)
+    // }
   }
   console.log('adventureAll complete')
 }
