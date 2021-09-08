@@ -28,7 +28,7 @@ https://ftmscan.com/address/0x123xxx456#tokentxnsErc721
 5、立即执行一次adventure：运行 `yarn startNow`
 
 6、每天凌晨12:00自动执行一次adventure：
-- 启动：`./start.sh`
+- 启动/重启：`./start.sh`
 - 停止：`pm2 stop rarity`
 - 查看Log：`pm2 log rarity`
 
