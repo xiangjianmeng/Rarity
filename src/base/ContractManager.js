@@ -48,9 +48,11 @@ class ContractManager {
       }
       // try maxPrice and wait, web3 will wait with transactionPollingTimeout
       if (NumberUtils.gt(currentPrice, maxPrice)) {
+        console.log(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
         return maxPrice
       }
       // use currentPrice
+      console.log(`use current gas price ${currentPrice}`)
       return currentPrice
     })
   }
