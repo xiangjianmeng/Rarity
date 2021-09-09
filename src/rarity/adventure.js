@@ -60,7 +60,8 @@ async function adventureAll() {
   for (const { account, heros } of AccountHeros) {
     // run serial
     for (const [index, hero] of heros.entries()) {
-      await adventure(account, hero, index)
+      // TODO fix "nonce too low" issue and add nonce
+      await adventure(account, hero)
     }
     // run parallel
     // try {
