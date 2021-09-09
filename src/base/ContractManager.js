@@ -40,9 +40,9 @@ class ContractManager {
    */
   setGasPriceLimit(limit) {
     this.setGasPriceCalculator(async (gasPriceArgs) => {
-      const price = this.gasPrice()
+      const price = await this.gasPrice()
       if (NumberUtils.gt(price, limit)) {
-        return -1 // abort
+        throw Error(`current gas price is ${price} and the limit is ${limit}, abort transaction`)
       }
       return price
     })
@@ -52,7 +52,7 @@ class ContractManager {
    * @param {Function} calculator async function to calc gas price
    *        args: gasPrice set by method.
    *        return gas price for transaction,
-   *        return null to abort transaction
+   *        return null or throw Error to abort transaction
    */
   setGasPriceCalculator(calculator) {
     this.gasPriceCalculator = calculator
@@ -238,6 +238,9 @@ class ContractManager {
     return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }
 
+  /**
+   * throw error if gas price not suit the needs
+   */
   async calcGasPrice(gasPrice) {
     if (this.gasPriceCalculator) {
       gasPrice = await this.gasPriceCalculator(gasPrice)
