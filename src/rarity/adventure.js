@@ -59,8 +59,8 @@ async function adventureAll() {
   console.log('adventureAll start')
   for (const { account, heros } of AccountHeros) {
     // run serial
-    for (const hero of heros) {
-      await adventure(account, hero)
+    for (const [index, hero] of heros.entries()) {
+      await adventure(account, hero, index)
     }
     // run parallel
     // try {
