@@ -76,11 +76,12 @@ async function adventureAll() {
 
 async function scheduleAdventure() {
   const CronJob = require('cron').CronJob;
-  const job = new CronJob('0 0 0 * * *', function () {
+  const cron = '0 0 /4 * * *' // try every 4 hours
+  const job = new CronJob(cron, function () {
     adventureAll()
   }, null, false, 'Asia/Shanghai')
   job.start()
-  console.log('scheduled 0 0 0 * * *')
+  console.log(`scheduled ${cron}`)
 }
 
 async function schedule() {
