@@ -36,15 +36,22 @@ class ContractManager {
 
   /**
    * set gasPrice limit for transaction
-   * @param {*} limit gas price in wei
+   * @param {Number} maxPrice gas price in wei
+   * @param {Number|null} abortPrice abort transaction if current gas price is lager than this
    */
-  setGasPriceLimit(limit) {
+  setGasPriceLimit(maxPrice, abortPrice) {
     this.setGasPriceCalculator(async (gasPriceArgs) => {
-      const price = await this.gasPrice()
-      if (NumberUtils.gt(price, limit)) {
-        throw Error(`current gas price is ${price} and the limit is ${limit}, abort transaction`)
+      const currentPrice = await this.gasPrice()
+      // if currentPrice > abortPrice, abort the transaction
+      if (NumberUtils.gt(currentPrice, abortPrice)) {
+        throw Error(`current gas price is ${currentPrice} > ${abortPrice}, abort transaction`)
       }
-      return price
+      // try maxPrice and wait, web3 will wait with transactionPollingTimeout
+      if (NumberUtils.gt(currentPrice, maxPrice)) {
+        return maxPrice
+      }
+      // use currentPrice
+      return currentPrice
     })
   }
 
