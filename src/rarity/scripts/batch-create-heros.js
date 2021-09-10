@@ -24,7 +24,7 @@ async function main() {
       const _class = i % 11 + 1
       console.log(`mint hero ${i} with class ${_class} for account ${address}`)
       try {
-        // await rarity.summon(address, _class)
+        await rarity.summon(address, _class)
       } catch (e) {
         console.error(`mint hero ${i} failed`, e)
       }
