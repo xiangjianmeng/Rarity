@@ -3,16 +3,17 @@
  * https://github.com/andrecronje/rarity
  */
 const ContractManager = require("../base/ContractManager");
+const GasPriceCalculators = require("../base/GasPriceCalculators");
 const Providers = require("../base/Providers");
 
 const CONTRACT_ADDRESS = '0xce761d788df608bd21bdd59d6f4b54b2e27f25bb'
-const ABI = require('./ABI.json')
+const ABI = require('./abi_rarity.json')
 
 class Rariry extends ContractManager {
 
   constructor() {
     super(Providers.ftm(), CONTRACT_ADDRESS, ABI)
-    this.setGasPriceLimit(80e9, 150e9) // 120Gwei, 150Gwei
+    this.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
   }
 
   adventure(account, id, nonce = null) {

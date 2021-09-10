@@ -4,13 +4,15 @@ const csv = require('csvtojson')
 const Promise = require('bluebird')
 const Rarity = require('./Rarity')
 const NumberUtils = require('../base/NumberUtils')
+const RariryGold = require('./RarityGold')
+const RariryCraftingMaterials = require('./RarityCraftingMaterials')
 
 const rarity = new Rarity()
+const gold = new RariryGold()
+const craftI = new RariryCraftingMaterials()
 
 const AccountHeros = []
 const secretsDir = path.resolve(__dirname, '../../secrets/')
-
-const CONTRACT_ADDRESS = '0xce761d788df608bd21bdd59d6f4b54b2e27f25bb'
 
 async function loadAccounts() {
   console.log('loadAccounts start')
@@ -22,7 +24,7 @@ async function loadAccounts() {
       const file = files.find(s => s.includes(account.toLowerCase()))
       if (file) {
         const csvData = await csv().fromFile(path.resolve(secretsDir, file))
-        const heros = csvData.filter(a => a.ContractAddress === CONTRACT_ADDRESS).map(a => a.TokenId)
+        const heros = csvData.filter(a => a.ContractAddress === rarity.getContractAddress()).map(a => a.TokenId)
         AccountHeros.push({ account, heros })
       }
     } catch (e) {
@@ -55,22 +57,60 @@ async function adventure(account, id, nonce = null) {
   }
 }
 
+async function claimGold(account, hero) {
+  console.log(`${hero} claimGold start (account ${account})`)
+  try {
+    const claimable = await gold.claimable(hero)
+    if (NumberUtils.gt(claimable, 0)) {
+      await gold.claim(account, hero)
+      console.log(`${hero} claimGold claimed ${claimable} gold`)
+    } else {
+      console.log(`${hero} claimGold no gold`)
+    }
+  } catch (e) {
+    console.error(`${hero} claimGold error`, e)
+  }
+}
+
+async function collectCraftI(account, hero) {
+  console.log(`${hero} collectCraft(I) start (account ${account})`)
+  try {
+    const { timestamp } = await rarity.pendingBlock()
+    const adventurers_log = await craftI.adventures_log(hero)
+    if (NumberUtils.lte(timestamp, adventurers_log)) {
+      console.log(`${id} collectCraft(I) canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
+      return
+    }
+    await craftI.adventure(account, hero)
+    const balance = await craftI.balanceOf(hero)
+    console.log(`${hero} collectCraft(I) complete, balance is ${balance} now`)
+  } catch (e) {
+    console.error(`${hero} collectCraft(I) error`, e)
+  }
+}
+
+async function adventureAccount(account, heros) {
+  // run serial
+  for (const [index, hero] of heros.entries()) {
+    // TODO fix "nonce too low" issue and add nonce
+    await adventure(account, hero)
+    await claimGold(account, hero)
+    await collectCraftI(account, hero)
+  }
+  // run parallel
+  // try {
+  //   await Promise.map(heros, (hero, index) => {
+  //     return adventure(account, hero, index)
+  //   }, { concurrency: 20 }) // max about 70 transactions in one ethereum block
+  // } catch (e) {
+  //   console.error(`account ${account} adventure error`, e)
+  // }
+}
+
 async function adventureAll() {
   console.log('adventureAll start')
   for (const { account, heros } of AccountHeros) {
-    // run serial
-    for (const [index, hero] of heros.entries()) {
-      // TODO fix "nonce too low" issue and add nonce
-      await adventure(account, hero)
-    }
-    // run parallel
-    // try {
-    //   await Promise.map(heros, (hero, index) => {
-    //     return adventure(account, hero, index)
-    //   }, { concurrency: 20 }) // max about 70 transactions in one ethereum block
-    // } catch (e) {
-    //   console.error(`account ${account} adventure error`, e)
-    // }
+    await adventureAccount(account, heros)
   }
   console.log('adventureAll complete')
 }

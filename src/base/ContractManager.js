@@ -1,5 +1,4 @@
 const Web3 = require('web3')
-const NumberUtils = require('./NumberUtils')
 
 const debug = () => { }
 // const debug = console.log
@@ -31,35 +30,17 @@ class ContractManager {
   }) {
     if (!provider) throw new Error('Provider is empty!')
     this.web3 = new Web3(provider, null, options)
+    this.contractAddress = contractAddress
     this.contract = (this.web3 && abi && contractAddress) ? new this.web3.eth.Contract(abi, contractAddress) : null
   }
 
-  /**
-   * set gasPrice limit for transaction
-   * @param {Number} maxPrice gas price in wei
-   * @param {Number|null} abortPrice abort transaction if current gas price is lager than this
-   */
-  setGasPriceLimit(maxPrice, abortPrice) {
-    this.setGasPriceCalculator(async (gasPriceArgs) => {
-      const currentPrice = await this.gasPrice()
-      // if currentPrice > abortPrice, abort the transaction
-      if (NumberUtils.gt(currentPrice, abortPrice)) {
-        throw Error(`current gas price is ${currentPrice} > ${abortPrice}, abort transaction`)
-      }
-      // try maxPrice and wait, web3 will wait with transactionPollingTimeout
-      if (NumberUtils.gt(currentPrice, maxPrice)) {
-        console.log(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
-        return maxPrice
-      }
-      // use currentPrice
-      console.log(`use current gas price ${currentPrice}`)
-      return currentPrice
-    })
+  getContractAddress() {
+    return this.contractAddress
   }
 
   /**
    * @param {Function} calculator async function to calc gas price
-   *        args: gasPrice set by method.
+   *        args: (web3, gasPriceArgs),
    *        return gas price for transaction,
    *        return null or throw Error to abort transaction
    */
@@ -252,7 +233,7 @@ class ContractManager {
    */
   async calcGasPrice(gasPrice) {
     if (this.gasPriceCalculator) {
-      gasPrice = await this.gasPriceCalculator(gasPrice)
+      gasPrice = await this.gasPriceCalculator(this.web3, gasPrice)
       if (!gasPrice) {
         throw Error('Gas price is null, abort transaction')
       }

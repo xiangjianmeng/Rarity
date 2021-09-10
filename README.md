@@ -47,7 +47,7 @@ Windows系统：直接运行 `yarn start`，保持命令行窗口始终开启
 ## 说明
 
 1. 目前为测试版本，不保证稳定可靠
-2. gas price逻辑（具体可参考src/rariry/Rarity.js, src/base/ContractManager.js）：
+2. gas price逻辑（具体可参考 `GasPriceCalculators.withDefaultLimit()` ）：
     - 如果当前的gasPrice>150Gwei，终止操作，稍后会重新尝试
     - 如果当前的gasPrice>80Gwei，尝试用80Gwei发送transaction
     - 如果当前的gasPrice<80Gwei，直接用当前值发送transaction
