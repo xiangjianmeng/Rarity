@@ -52,15 +52,15 @@ Windows系统：直接运行 `yarn start`，保持命令行窗口始终开启
 
 1. 目前为测试版本，不保证稳定可靠
 2. gas price逻辑（具体可参考 `GasPriceCalculators.withDefaultLimit()` ）：
-    - 如果当前的gasPrice>150Gwei，终止操作，稍后会重新尝试
     - 如果当前的gasPrice>80Gwei，尝试用80Gwei发送transaction
     - 如果当前的gasPrice<80Gwei，直接用当前值发送transaction
 
 
 ## 批量创建账号
 
-为了安全，不在命令行中输入/输出私钥，均使用json文件读写
-账号json文件格式统一为 `[{address,privateKey}, {...}, ...]`
+为了安全，不在命令行中输入/输出私钥，均使用json文件读写，账号json文件格式统一为 `[{address,privateKey}, {...}, ...]`，只需要单个账号的只读取第一个，私钥会按需读取。
+
+以下脚本已经过测试可用。还不放心的话，可以先看下源码，找少量账号先测试一下，确认无误后再使用更多号。
 
 创建账号
 - 参数: 创建账号数量，输出账号列表
@@ -75,7 +75,7 @@ node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18
 ```
 
 创建英雄
-- 参数：带私钥的账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
+- 参数：账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
 ```
 node src/rarity/scripts/batch-create-heros.js accounts.json 11
 ```
