@@ -5,8 +5,8 @@
  */
 const path = require('path')
 const Providers = require('../base/Providers')
-const ContractManager = require('../base/ContractManager')
-const contract = new ContractManager(Providers.ftm(), null, null)
+const EthereumManager = require('../base/EthereumManager')
+const eth = new EthereumManager(Providers.ftm(), null, null)
 
 async function main() {
   console.log(process.argv)
@@ -20,7 +20,7 @@ async function main() {
   const accounts = require(path.resolve('.', process.argv[2]))
 
   for (const account of accounts) {
-    const balance = await contract.balance(account.address, true)
+    const balance = await eth.balance(account.address, true)
     console.log(`account ${account.address} balance is ${balance} Ether`)
   }
 }

@@ -1,47 +1,20 @@
-const fs = require('fs')
-const path = require('path')
-const csv = require('csvtojson')
 const Promise = require('bluebird')
 const Rarity = require('./Rarity')
 const NumberUtils = require('../base/NumberUtils')
-const RariryGold = require('./RarityGold')
-const RariryCraftingMaterials = require('./RarityCraftingMaterials')
+const RarityGold = require('./RarityGold')
+const RarityCraftingMaterials = require('./RarityCraftingMaterials')
+const { rarityEth } = require('./RarityEthereumManager')
+const { loadAccounts } = require('./AccountsLoader')
 
 const rarity = new Rarity()
-const gold = new RariryGold()
-const craftI = new RariryCraftingMaterials()
-
-const AddressHeros = [] // [{ address, heros[] }]
-const secretsDir = path.resolve(__dirname, '../../secrets/')
-
-async function loadAccounts() {
-  console.log('loadAccounts start')
-  const accounts = require(path.resolve(secretsDir, 'rarity-accounts.json'))
-  const files = fs.readdirSync(secretsDir)
-  for (const account of accounts) {
-    try {
-      const address = await rarity.addAccount(account.privateKey)
-      if (address !== account.address) {
-        throw Error(`import account ${account.address} failed`)
-      }
-      const file = files.find(s => s.includes(address.toLowerCase()))
-      if (file) {
-        const csvData = await csv().fromFile(path.resolve(secretsDir, file))
-        const heros = csvData.filter(a => a.ContractAddress === rarity.getContractAddress()).map(a => a.TokenId)
-        AddressHeros.push({ address, heros })
-      }
-    } catch (e) {
-      console.error('load account error', e)
-    }
-  }
-  console.log('loadAccounts complete', AddressHeros)
-}
+const gold = new RarityGold()
+const craftI = new RarityCraftingMaterials()
 
 async function adventure(account, id, nonce = null) {
   console.log(`${id} adventure start (account ${account})`)
   try {
     const adventurers_log = await rarity.adventurers_log(id)
-    const { timestamp } = await rarity.pendingBlock()
+    const { timestamp } = await rarityEth.pendingBlock()
     if (NumberUtils.lte(timestamp, adventurers_log)) {
       console.log(`${id} adventure canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
       return
@@ -78,7 +51,7 @@ async function claimGold(account, hero) {
 async function collectCraftI(account, hero) {
   console.log(`${hero} collectCraft(I) start (account ${account})`)
   try {
-    const { timestamp } = await rarity.pendingBlock()
+    const { timestamp } = await rarityEth.pendingBlock()
     const adventurers_log = await craftI.adventurers_log(hero)
     if (NumberUtils.lte(timestamp, adventurers_log)) {
       console.log(`${id} collectCraft(I) canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
@@ -110,7 +83,7 @@ async function adventureAccount(account, heros) {
   // }
 }
 
-async function adventureAll() {
+async function adventureAll(AddressHeros) {
   console.log('adventureAll start')
   for (const { address, heros } of AddressHeros) {
     await adventureAccount(address, heros)
@@ -118,24 +91,24 @@ async function adventureAll() {
   console.log('adventureAll complete')
 }
 
-async function scheduleAdventure() {
+async function scheduleAdventure(AddressHeros) {
   const CronJob = require('cron').CronJob;
   const cron = '0 0 */4 * * *' // try every 4 hours
   const job = new CronJob(cron, function () {
-    adventureAll()
+    adventureAll(AddressHeros)
   }, null, false, 'Asia/Shanghai')
   job.start()
   console.log(`scheduled ${cron}`)
 }
 
 async function schedule() {
-  await loadAccounts()
-  scheduleAdventure()
+  const AddressHeros = await loadAccounts()
+  scheduleAdventure(AddressHeros)
 }
 
 async function adventureNow() {
-  await loadAccounts()
-  adventureAll()
+  const AddressHeros = await loadAccounts()
+  adventureAll(AddressHeros)
 }
 
 module.exports = {

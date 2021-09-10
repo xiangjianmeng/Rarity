@@ -2,18 +2,16 @@
  * https://ftmscan.com/address/0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A#code
  * https://github.com/andrecronje/rarity
  */
-const ContractManager = require("../base/ContractManager");
-const GasPriceCalculators = require("../base/GasPriceCalculators");
-const Providers = require("../base/Providers");
+const ContractManager = require("../base/ContractManager")
+const { rarityEth } = require("./RarityEthereumManager")
 
-const CONTRACT_ADDRESS = '0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A'
-const ABI = require('./abi_rarity_crafting_materials.json')
+class RarityCraftingMaterials extends ContractManager {
 
-class RariryCraftingMaterials extends ContractManager {
+  static CONTRACT_ADDRESS = '0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A'
+  static ABI = require('./abi_rarity_crafting_materials.json')
 
   constructor() {
-    super(Providers.ftm(), CONTRACT_ADDRESS, ABI)
-    this.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
+    super(rarityEth, RarityCraftingMaterials.CONTRACT_ADDRESS, RarityCraftingMaterials.ABI)
   }
 
   adventurers_log(hero) {
@@ -29,4 +27,4 @@ class RariryCraftingMaterials extends ContractManager {
   }
 }
 
-module.exports = RariryCraftingMaterials
+module.exports = RarityCraftingMaterials

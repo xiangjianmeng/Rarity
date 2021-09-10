@@ -2,18 +2,16 @@
  * https://ftmscan.com/address/0xce761d788df608bd21bdd59d6f4b54b2e27f25bb#code
  * https://github.com/andrecronje/rarity
  */
-const ContractManager = require("../base/ContractManager");
-const GasPriceCalculators = require("../base/GasPriceCalculators");
-const Providers = require("../base/Providers");
+const ContractManager = require("../base/ContractManager")
+const { rarityEth } = require("./RarityEthereumManager")
 
-const CONTRACT_ADDRESS = '0xce761d788df608bd21bdd59d6f4b54b2e27f25bb'
-const ABI = require('./abi_rarity.json')
+class Rarity extends ContractManager {
 
-class Rariry extends ContractManager {
+  static CONTRACT_ADDRESS = '0xce761d788df608bd21bdd59d6f4b54b2e27f25bb'
+  static ABI = require('./abi_rarity.json')
 
   constructor() {
-    super(Providers.ftm(), CONTRACT_ADDRESS, ABI)
-    this.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
+    super(rarityEth, Rarity.CONTRACT_ADDRESS, Rarity.ABI)
   }
 
   summon(account, _class) {
@@ -54,4 +52,4 @@ class Rariry extends ContractManager {
   }
 }
 
-module.exports = Rariry
+module.exports = Rarity

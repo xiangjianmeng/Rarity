@@ -6,8 +6,8 @@
 const path = require('path')
 const BigNumber = require('bignumber.js')
 const Providers = require('../base/Providers')
-const ContractManager = require('../base/ContractManager')
-const contract = new ContractManager(Providers.ftm(), null, null)
+const EthereumManager = require('../base/EthereumManager')
+const eth = new EthereumManager(Providers.ftm(), null, null)
 
 async function main() {
   console.log(process.argv)
@@ -19,7 +19,7 @@ async function main() {
   }
 
   const srcAccounts = require(path.resolve('.', process.argv[2]))
-  const srcAccount = await contract.addAccount(srcAccounts[0].privateKey)
+  const srcAccount = await eth.addAccount(srcAccounts[0].privateKey)
   if (srcAccount !== srcAccounts[0].address) {
     throw Error(`src account import failed`)
   }
@@ -29,7 +29,7 @@ async function main() {
 
   for (const account of dstAccounts) {
     console.log(`send ${value} wei from ${srcAccount} to ${account.address} ...`)
-    await contract.send(srcAccount, account.address, value)
+    await eth.send(srcAccount, account.address, value)
   }
   console.log('complete')
 }
