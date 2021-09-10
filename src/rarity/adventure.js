@@ -11,27 +11,30 @@ const rarity = new Rarity()
 const gold = new RariryGold()
 const craftI = new RariryCraftingMaterials()
 
-const AccountHeros = []
+const AddressHeros = [] // [{ address, heros[] }]
 const secretsDir = path.resolve(__dirname, '../../secrets/')
 
 async function loadAccounts() {
   console.log('loadAccounts start')
-  const keys = require(path.resolve(secretsDir, 'rarity_accounts.json')).privateKeys
+  const accounts = require(path.resolve(secretsDir, 'rarity-accounts.json'))
   const files = fs.readdirSync(secretsDir)
-  for (const key of keys) {
+  for (const account of accounts) {
     try {
-      const account = await rarity.addAccount(key)
-      const file = files.find(s => s.includes(account.toLowerCase()))
+      const address = await rarity.addAccount(account.privateKey)
+      if (address !== account.address) {
+        throw Error(`import account ${account.address} failed`)
+      }
+      const file = files.find(s => s.includes(address.toLowerCase()))
       if (file) {
         const csvData = await csv().fromFile(path.resolve(secretsDir, file))
         const heros = csvData.filter(a => a.ContractAddress === rarity.getContractAddress()).map(a => a.TokenId)
-        AccountHeros.push({ account, heros })
+        AddressHeros.push({ address, heros })
       }
     } catch (e) {
       console.error('load account error', e)
     }
   }
-  console.log('loadAccounts complete', AccountHeros)
+  console.log('loadAccounts complete', AddressHeros)
 }
 
 async function adventure(account, id, nonce = null) {
@@ -109,8 +112,8 @@ async function adventureAccount(account, heros) {
 
 async function adventureAll() {
   console.log('adventureAll start')
-  for (const { account, heros } of AccountHeros) {
-    await adventureAccount(account, heros)
+  for (const { address, heros } of AddressHeros) {
+    await adventureAccount(address, heros)
   }
   console.log('adventureAll complete')
 }

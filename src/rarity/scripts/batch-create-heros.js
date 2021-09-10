@@ -1,13 +1,24 @@
 /**
- * 创建英雄
- * - 参数：带私钥的账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
+ * Batch create heros
+ * Usage:   node src/rarity/scripts/batch-create-heros.js ACCOUNT_LIST_JSON_FILE HERO_COUNT_PER_ACCOUNT
+ * Example: node src/rarity/scripts/batch-create-heros.js secrets/accounts.json 11
  */
 const path = require('path')
+const GasPriceCalculators = require('../../base/GasPriceCalculators')
 const Rarity = require('../Rarity')
 const rarity = new Rarity()
+// change here to use different gas price strategy
+rarity.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
 
 async function main() {
   console.log(process.argv)
+
+  if (process.argv.length != 4) {
+    console.log('Usage:   node src/rarity/scripts/batch-create-heros.js ACCOUNT_LIST_JSON_FILE HERO_COUNT_PER_ACCOUNT')
+    console.log('Example: node src/rarity/scripts/batch-create-heros.js secrets/accounts.json 11')
+    return
+  }
+
   const accounts = require(path.resolve('.', process.argv[2]))
   const heroCount = Number(process.argv[3])
 

@@ -1,6 +1,7 @@
 /**
  * batch create accounts
- * usage: node src/scripts/batch-create-accounts.js 100 batch-accounts.json
+ * Usage:   node src/scripts/batch-create-accounts.js COUNT ACCOUNT_LIST_JSON_FILE
+ * Example: node src/scripts/batch-transfer-ether.js 10 secrets/accounts.json
  */
 
 const Providers = require('../base/Providers')
@@ -9,6 +10,13 @@ const contract = new ContractManager(Providers.ftm(), null, null)
 
 function main() {
   console.log(process.argv)
+
+  if (process.argv.length != 4) {
+    console.log('Usage:   node src/scripts/batch-create-accounts.js COUNT ACCOUNT_LIST_JSON_FILE')
+    console.log('Example: node src/scripts/batch-transfer-ether.js 10 secrets/accounts.json')
+    return
+  }
+
   const count = Number(process.argv[2] || 10)
   const file = process.argv[3] || 'output.json'
   const accounts = contract.createAccounts(count)

@@ -21,7 +21,7 @@ class Rariry extends ContractManager {
   }
 
   adventure(account, id, nonce = null) {
-    return this.write('adventure(uint256)', id, account, { gas: 90000, nonce })
+    return this.write('adventure(uint256)', id, account, { gas: 100e4, nonce })
   }
 
   /**
@@ -50,7 +50,7 @@ class Rariry extends ContractManager {
   }
 
   level_up(account, id, nonce = null) {
-    return this.write('level_up(uint256)', id, account, { gas: 90000, nonce })
+    return this.write('level_up(uint256)', id, account, { gas: 100e4, nonce })
   }
 }
 

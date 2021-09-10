@@ -14,14 +14,18 @@
 
 2、创建secrets目录，和src目录平级
 
-3、创建secrects/rarity_accounts.json文件，保存所有账号私钥，格式如下：
+3、创建secrects/rarity-accounts.json文件，保存所有账号地址和私钥，格式如下：
 ```json
-{
-  "privateKeys": [
-    "xxx1",
-    "xxx2",
-  ]
-}
+[
+  {
+    "address": "0x123...",
+    "privateKey": "123..."
+  },
+  {
+    "address": "0x123...",
+    "privateKey": "123..."
+  }
+]
 ```
 
 4、从ftmscan下载所有账号ERC721的csv，保存到secrects目录，文件名中默认包含了该账号的地址（如果没有需要自己修改文件名）

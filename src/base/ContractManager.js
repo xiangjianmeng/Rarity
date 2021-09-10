@@ -57,6 +57,18 @@ class ContractManager {
   }
 
   /**
+   * @param {*} convertToEther true for ETH, false for wei
+   */
+  async balance(address, convertToEther = false) {
+    const balance = await this.web3.eth.getBalance(address)
+    if (convertToEther) {
+      return Web3.utils.fromWei(balance)
+    } else {
+      return balance
+    }
+  }
+
+  /**
    * @returns
    * {
    *   difficulty: '0',
@@ -166,7 +178,7 @@ class ContractManager {
    * @param {String} method 'myMethod(uint256, uint256)'
    * @param {Array} params '[123, 456]'
    * @param {String} account '0x000...000'
-   * @param {Number} gas gas limit
+   * @param {Number} gas gas limit, 2.1w for transfer, 6w for simple contract call
    * @param {Number} gasPrice gas price in wei
    * @param {Number} value transfer value in wei
    * @returns {Promise<Object>} 'value' or Result { key1: 'value1', key2: 'value2' } or receipt:
@@ -186,7 +198,7 @@ class ContractManager {
    *   events: {}
    * }
    */
-  async write(method, params, account, { gas, gasPrice, value, nonce } = { gas: 90000 }) {
+  async write(method, params, account, { gas, gasPrice, value, nonce } = { gas: 100e4 }) {
     this.checkContract()
     account = account || this.account
     if (!account) throw Error('Account is invalid, maybe call addAccount first!')
