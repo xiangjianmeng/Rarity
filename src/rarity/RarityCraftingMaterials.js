@@ -14,6 +14,10 @@ class RarityCraftingMaterials extends ContractManager {
     super(rarityEth, RarityCraftingMaterials.CONTRACT_ADDRESS, RarityCraftingMaterials.ABI)
   }
 
+  scout(hero) {
+    return this.read('scout(uint256)', hero)
+  }
+
   adventurers_log(hero) {
     return this.read('adventurers_log(uint256)', hero)
   }

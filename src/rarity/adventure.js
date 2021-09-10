@@ -37,12 +37,12 @@ async function claimGold(account, hero) {
   console.log(`${hero} claimGold start (account ${account})`)
   try {
     const claimable = await gold.claimable(hero)
-    if (NumberUtils.gt(claimable, 0)) {
-      await gold.claim(account, hero)
-      console.log(`${hero} claimGold claimed ${claimable} gold`)
-    } else {
-      console.log(`${hero} claimGold no gold`)
+    if (!NumberUtils.gt(claimable, 0)) {
+      console.log(`${hero} claimGold canceled, no gold`)
+      return
     }
+    await gold.claim(account, hero)
+    console.log(`${hero} claimGold claimed ${claimable} gold`)
   } catch (e) {
     console.error(`${hero} claimGold error`, e)
   }
@@ -51,6 +51,11 @@ async function claimGold(account, hero) {
 async function collectCraftI(account, hero) {
   console.log(`${hero} collectCraft(I) start (account ${account})`)
   try {
+    const reward = await craftI.scout(hero)
+    if (!NumberUtils.gt(reward, 0)) {
+      console.log(`${hero} collectCraft(I) canceled, reward is 0`)
+      return
+    }
     const { timestamp } = await rarityEth.pendingBlock()
     const adventurers_log = await craftI.adventurers_log(hero)
     if (NumberUtils.lte(timestamp, adventurers_log)) {

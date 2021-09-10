@@ -19,15 +19,33 @@ class GasPriceCalculators {
   }
 
   static withDefaultLimit() {
-    return GasPriceCalculators.withLimit(80e9, 150e9)
+    return GasPriceCalculators.withLimit(80e9)
   }
 
   /**
-   * set gasPrice limit for transaction
-   * @param {Number} maxPrice gas price in wei
+   * use currentPrice or maxPrice
+   * @param {Number} maxPrice max gas price in wei
+   */
+   static withLimit(maxPrice) {
+    return async function (web3, price) {
+      const currentPrice = await getCurrentPrice(web3)
+      // try maxPrice and wait, web3 will wait with transactionPollingTimeout
+      if (NumberUtils.gt(currentPrice, maxPrice)) {
+        console.log(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
+        return maxPrice
+      }
+      // use currentPrice
+      console.log(`use current gas price ${currentPrice}`)
+      return currentPrice
+    }
+  }
+
+  /**
+   * use currentPrice or maxPrice or abort transaction
+   * @param {Number} maxPrice max gas price in wei
    * @param {Number|null} abortPrice abort transaction if current gas price is lager than this
    */
-  static withLimit(maxPrice, abortPrice) {
+  static withAbortLimit(maxPrice, abortPrice) {
     return async function (web3, price) {
       const currentPrice = await getCurrentPrice(web3)
       // if currentPrice > abortPrice, abort the transaction
