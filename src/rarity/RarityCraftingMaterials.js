@@ -16,8 +16,8 @@ class RariryCraftingMaterials extends ContractManager {
     this.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
   }
 
-  adventures_log(hero) {
-    return this.read('adventures_log(uint256)', hero)
+  adventurers_log(hero) {
+    return this.read('adventurers_log(uint256)', hero)
   }
 
   adventure(account, hero) {

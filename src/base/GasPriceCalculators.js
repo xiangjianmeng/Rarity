@@ -2,6 +2,8 @@
  * Calculate gas price
  */
 
+const NumberUtils = require("./NumberUtils")
+
 /**
  * https://web3js.readthedocs.io/en/v1.5.2/web3-eth.html#getgasprice
  * @returns {String} current gas price in wei.
@@ -13,11 +15,11 @@ function getCurrentPrice(web3) {
 class GasPriceCalculators {
 
   static useCurrent() {
-    return (web3, price) => _getCurrentPrice(web3)
+    return (web3, price) => getCurrentPrice(web3)
   }
 
   static withDefaultLimit() {
-    return withLimit(80e9, 150e9)
+    return GasPriceCalculators.withLimit(80e9, 150e9)
   }
 
   /**

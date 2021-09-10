@@ -76,7 +76,7 @@ async function collectCraftI(account, hero) {
   console.log(`${hero} collectCraft(I) start (account ${account})`)
   try {
     const { timestamp } = await rarity.pendingBlock()
-    const adventurers_log = await craftI.adventures_log(hero)
+    const adventurers_log = await craftI.adventurers_log(hero)
     if (NumberUtils.lte(timestamp, adventurers_log)) {
       console.log(`${id} collectCraft(I) canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
       return
