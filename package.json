@@ -6,8 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "node src/index.js",
-    "startNow": "node src/index_now.js",
-    "test": "node src/tests/index.js"
+    "startNow": "node src/index_now.js"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.1",
