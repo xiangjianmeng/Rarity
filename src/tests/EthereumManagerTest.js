@@ -7,6 +7,11 @@ const eth = new EthereumManager(Providers.rinkeby())
 const accounts = require(path.resolve('.', 'secrets/test-accounts.json'))
 
 async function test() {
+  const gasPrice = await eth.gasPrice()
+  console.log(gasPrice)
+  console.log(NumberUtils.gt(gasPrice, 50e9)) // 50Gwei
+  console.log(NumberUtils.lt(gasPrice, 100e9)) // 100Gwei
+
   console.log('Initial account list', eth.accountList())
 
   for (const account of accounts) {

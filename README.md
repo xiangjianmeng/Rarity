@@ -56,7 +56,7 @@ Windows系统：直接运行 `yarn start`，保持命令行窗口始终开启
     - 如果当前的gasPrice<80Gwei，直接用当前值发送transaction
 
 
-## 批量创建账号
+## 账号批量管理
 
 为了安全，不在命令行中输入/输出私钥，均使用json文件读写，账号json文件格式统一为 `[{address,privateKey}, {...}, ...]`，只需要单个账号的只读取第一个，私钥会按需读取。
 
@@ -78,4 +78,16 @@ node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18
 - 参数：账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
 ```
 node src/rarity/scripts/batch-create-heros.js accounts.json 11
+```
+
+指定账号中创建单个英雄（可用于批量创建时少数失败调用的补创建）
+- 参数：账号列表(列表中包含了指定的账号即可)，指定账号地址，英雄的class
+```
+node src/rarity/scripts/manually-create-hero.js accounts.json 0x123...456 5
+```
+
+检查FTM余额
+- 参数：账号列表
+```
+node src/scripts/batch-check-ether.js secrets/rarity-accounts.json
 ```
