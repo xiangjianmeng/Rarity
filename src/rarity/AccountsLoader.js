@@ -34,5 +34,3 @@ async function loadAccounts() {
 module.exports = {
   loadAccounts
 }
-
-loadAccounts()
