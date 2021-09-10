@@ -16,6 +16,10 @@ class Rariry extends ContractManager {
     this.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
   }
 
+  summon(account, _class) {
+    return this.write('summon(uint256)', _class, account)
+  }
+
   adventure(account, id, nonce = null) {
     return this.write('adventure(uint256)', id, account, { gas: 90000, nonce })
   }

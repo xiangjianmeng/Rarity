@@ -51,3 +51,27 @@ Windows系统：直接运行 `yarn start`，保持命令行窗口始终开启
     - 如果当前的gasPrice>150Gwei，终止操作，稍后会重新尝试
     - 如果当前的gasPrice>80Gwei，尝试用80Gwei发送transaction
     - 如果当前的gasPrice<80Gwei，直接用当前值发送transaction
+
+
+## 批量创建账号
+
+为了安全，不在命令行中输入/输出私钥，均使用json文件读写
+账号json文件格式统一为 `[{address,privateKey}, {...}, ...]`
+
+创建账号
+- 参数: 创建账号数量，输出账号列表
+```
+node src/scripts/batch-create-accounts.js 10 accounts.json
+```
+
+FTM转账
+- 参数：转出账号(使用列表中的第一个)，转入账号列表，每个账号转账FTM数量
+```
+node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18
+```
+
+创建英雄
+- 参数：带私钥的账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
+```
+node src/rarity/scripts/batch-create-heros.js accounts.json 11
+```

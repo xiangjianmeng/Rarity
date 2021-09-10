@@ -202,7 +202,7 @@ class ContractManager {
    *
    * @param {String} from from address or null for default
    * @param {String} to to address
-   * @param {String} value amount in ether
+   * @param {String} value amount in wei
    * @returns {Promise<Object>}
    * {
    *   blockHash: '0x53dxxx',
@@ -224,7 +224,6 @@ class ContractManager {
   async send(from, to, value, { gas, gasPrice, nonce } = { gas: 21000 }) {
     gasPrice = await this.calcGasPrice(gasPrice)
     from = from || this.account
-    value = Web3.utils.toWei(value, 'ether')
     return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }
 
