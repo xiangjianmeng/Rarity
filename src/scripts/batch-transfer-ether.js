@@ -6,7 +6,7 @@ const path = require('path')
 const BigNumber = require('bignumber.js')
 const Providers = require('../base/Providers')
 const ContractManager = require('../base/ContractManager')
-const contract = new ContractManager(Providers.rinkeby(), null, null)
+const contract = new ContractManager(Providers.ftm(), null, null)
 
 async function main() {
   console.log(process.argv)
