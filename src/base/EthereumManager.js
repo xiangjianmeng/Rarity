@@ -175,6 +175,9 @@ class EthereumManager {
   async send(from, to, value, { gas, gasPrice, nonce } = { gas: 21000 }) {
     gasPrice = await this.calcGasPrice(gasPrice)
     from = from || this.account
+    if (!from) throw Error('From account is empty!')
+    if (!to) throw Error('To account is empty!')
+    console.log(`===> send ${value} ether from ${from} to ${to}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
     return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }
 
