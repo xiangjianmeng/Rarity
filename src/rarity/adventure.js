@@ -10,26 +10,26 @@ const rarity = new Rarity()
 const gold = new RarityGold()
 const craftI = new RarityCraftingMaterials()
 
-async function adventure(account, id, nonce = null) {
-  console.log(`${id} adventure start (account ${account})`)
+async function adventure(account, hero, nonce = null) {
+  console.log(`${hero} adventure start (account ${account})`)
   try {
-    const adventurers_log = await rarity.adventurers_log(id)
+    const adventurers_log = await rarity.adventurers_log(hero)
     const { timestamp } = await rarityEth.pendingBlock()
     if (NumberUtils.lte(timestamp, adventurers_log)) {
-      console.log(`${id} adventure canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
+      console.log(`${hero} adventure canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
       return
     }
-    await rarity.adventure(account, id, nonce)
-    const { _xp, _level } = await rarity.summoner(id)
+    await rarity.adventure(account, hero, nonce)
+    const { _xp, _level } = await rarity.summoner(hero)
     const xp_required = await rarity.xp_required(_level)
     // console.log({ adventurers_log, _xp, _level, xp_required })
     if (NumberUtils.gte(_xp, xp_required)) {
-      await rarity.level_up(account, id, nonce)
-      console.log(`${id} adventure level up`)
+      await rarity.level_up(account, hero, nonce)
+      console.log(`${hero} adventure level up`)
     }
-    console.log(`${id} adventure complete`)
+    console.log(`${hero} adventure complete`)
   } catch (e) {
-    console.error(`${id} adventure error`, e)
+    console.error(`${hero} adventure error`, e)
   }
 }
 
@@ -54,7 +54,7 @@ async function collectCraftI(account, hero) {
     const { timestamp } = await rarityEth.pendingBlock()
     const adventurers_log = await craftI.adventurers_log(hero)
     if (NumberUtils.lte(timestamp, adventurers_log)) {
-      console.log(`${id} collectCraft(I) canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
+      console.log(`${hero} collectCraft(I) canceled, need to wait to timestamp ${adventurers_log}, current timestamp is ${timestamp}`)
       return
     }
     await craftI.adventure(account, hero)
