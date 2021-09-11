@@ -91,3 +91,7 @@ node src/rarity/scripts/manually-create-hero.js accounts.json 0x123...456 5
 ```
 node src/scripts/batch-check-ether.js secrets/rarity-accounts.json
 ```
+
+## 常见问题
+
+1. `transaction underpriced`: 可能是当前gasPrice较高，而设置的gasPrice过低，GasPriceCalculators.withDefaultLimit 修改成120e9 试试
