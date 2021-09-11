@@ -9,7 +9,7 @@ const Rarity = require('../Rarity')
 const { rarityEth } = require('../RarityEthereumManager')
 const rarity = new Rarity()
 // change here to use different gas price strategy
-rarityEth.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
+rarityEth.setGasPriceCalculator(GasPriceCalculators.withDefaultPassable())
 
 async function main() {
   console.log(process.argv)

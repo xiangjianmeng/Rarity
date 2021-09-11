@@ -83,7 +83,7 @@ class ContractManager {
    *   events: {}
    * }
    */
-  async write(method, params, account, { gas, gasPrice, value, nonce } = { gas: 100e4 }) {
+  async write(method, params, account, { gas, gasPrice, value, nonce } = { gas: '1000000' }) {
     this.checkContract()
     if (!account) throw Error('Account is empty!')
     gasPrice = await this.ethereumManager.calcGasPrice(gasPrice)

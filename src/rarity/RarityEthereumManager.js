@@ -3,7 +3,7 @@ const GasPriceCalculators = require("../base/GasPriceCalculators")
 const Providers = require("../base/Providers")
 
 const rarityEth = new EthereumManager(Providers.ftm())
-rarityEth.setGasPriceCalculator(GasPriceCalculators.withDefaultLimit())
+rarityEth.setGasPriceCalculator(GasPriceCalculators.withDefaultPassable())
 
 module.exports = {
   rarityEth

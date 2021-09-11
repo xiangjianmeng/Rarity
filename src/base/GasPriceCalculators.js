@@ -22,6 +22,10 @@ class GasPriceCalculators {
     return GasPriceCalculators.withLimit(80e9)
   }
 
+  static withDefaultPassable() {
+    return GasPriceCalculators.withPassableLimit(150e9)
+  }
+
   /**
    * use currentPrice or maxPrice
    * @param {Number} maxPrice max gas price in wei
@@ -60,6 +64,26 @@ class GasPriceCalculators {
       // use currentPrice
       console.log(`use current gas price ${currentPrice}`)
       return currentPrice
+    }
+  }
+
+  /**
+   * use passablePrice or abort transaction
+   * @param {Number|null} abortPrice abort transaction if passable gas price is lager than this
+   * @param {Number|null} offset `passablePrice` is `currentPrice` - `offset`. Default is 20e9. Pass **positive** number for it.
+   */
+   static withPassableLimit(abortPrice, offset = 15e9) {
+    return async function (web3, price) {
+      const currentPrice = await getCurrentPrice(web3)
+      // If gasPrice too low, transaction fails outright. A passable price would be currentPrice - offset
+      const passablePrice = currentPrice - offset
+      // if passablePrice > abortPrice, abort the transaction
+      if (NumberUtils.gt(passablePrice, abortPrice)) {
+        throw Error(`passable gas price is ${passablePrice} > ${abortPrice}, abort transaction`)
+      }
+      // use passablePrice
+      console.log(`use passable gas price ${passablePrice}`)
+      return passablePrice
     }
   }
 }
