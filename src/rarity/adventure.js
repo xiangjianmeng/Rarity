@@ -98,7 +98,8 @@ async function adventureAll(AddressHeros) {
 
 async function scheduleAdventure(AddressHeros) {
   const CronJob = require('cron').CronJob;
-  const cron = '0 0 */4 * * *' // try every 4 hours
+  // second minute hour dayOfMonth month dayOfWeek
+  const cron = '0 0 * * * *' // try every 1 hour
   const job = new CronJob(cron, function () {
     adventureAll(AddressHeros)
   }, null, false, 'Asia/Shanghai')
