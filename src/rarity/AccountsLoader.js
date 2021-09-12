@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const csv = require('csvtojson')
 const { rarityEth } = require('./RarityEthereumManager')
-const Rarity = require('./Rarity')
+const Rarity = require('./contracts/Rarity')
 const logger = require('../base/logger')
 
 const secretsDir = path.resolve(__dirname, '../../secrets/')

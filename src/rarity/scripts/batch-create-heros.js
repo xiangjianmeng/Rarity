@@ -7,11 +7,11 @@ const { delay } = require('bluebird')
 const path = require('path')
 const GasPriceCalculators = require('../../base/GasPriceCalculators')
 const logger = require('../../base/logger')
-const Rarity = require('../Rarity')
+const Rarity = require('../contracts/Rarity')
 const { rarityEth } = require('../RarityEthereumManager')
 const rarity = new Rarity()
 // change here to use different gas price strategy
-rarity.setGasPriceCalculator(GasPriceCalculators.withDefaultPassable())
+rarity.setGasPriceCalculator(GasPriceCalculators.default())
 
 async function main() {
   logger.info(process.argv)

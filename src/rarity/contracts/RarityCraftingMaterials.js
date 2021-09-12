@@ -2,8 +2,8 @@
  * https://ftmscan.com/address/0x2A0F1cB17680161cF255348dDFDeE94ea8Ca196A#code
  * https://github.com/andrecronje/rarity
  */
-const ContractManager = require("../base/ContractManager")
-const { rarityEth } = require("./RarityEthereumManager")
+const ContractManager = require("../../base/ContractManager")
+const { rarityEth } = require("../RarityEthereumManager")
 
 class RarityCraftingMaterials extends ContractManager {
 

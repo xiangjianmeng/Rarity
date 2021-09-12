@@ -52,7 +52,8 @@ class ContractManager {
    */
   async read(method, params) {
     this.checkContract()
-    const r = await this.contract.methods[method](params).call()
+    if (!Array.isArray(params)) params = [params]
+    const r = await this.contract.methods[method].apply(undefined, params).call()
     debug('read method =', method, 'result =', r)
     return r
   }
@@ -88,9 +89,10 @@ class ContractManager {
     this.checkContract()
     if (!account) throw Error('Account is empty!')
     gasPrice = await this.ethereumManager.calcGasPrice(gasPrice)
-    if (nonce === null || nonce === undefined) nonce = await this.transactionCount(account)
-    logger.info(`===> write contract ${this.contractAddress} from ${account}, value: ${value}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
-    const r = await this.contract.methods[method](params).send({ from: account, gas, gasPrice, value, nonce })
+    if (nonce === null || nonce === undefined) nonce = await this.ethereumManager.transactionCount(account)
+    if (!Array.isArray(params)) params = [params]
+    logger.info(`===> write contract ${this.contractAddress}`, { account, method, params, options: { value, gasLimit: gas, gasPrice, nonce } })
+    const r = await this.contract.methods[method].apply(undefined, params).send({ from: account, gas, gasPrice, value, nonce })
     debug('write method =', method, 'result =', r)
     return r
   }

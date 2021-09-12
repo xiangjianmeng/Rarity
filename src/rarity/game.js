@@ -1,15 +1,21 @@
+const fs = require('fs')
+const path = require('path')
 const Promise = require('bluebird')
-const Rarity = require('./Rarity')
+const logger = require('../base/logger')
 const NumberUtils = require('../base/NumberUtils')
-const RarityGold = require('./RarityGold')
-const RarityCraftingMaterials = require('./RarityCraftingMaterials')
+
 const { rarityEth } = require('./RarityEthereumManager')
 const { loadAccounts } = require('./AccountsLoader')
-const logger = require('../base/logger')
+
+const Rarity = require('./contracts/Rarity')
+const RarityGold = require('./contracts/RarityGold')
+const RarityCraftingMaterials = require('./contracts/RarityCraftingMaterials')
+const RarityAttributes = require('./contracts/RarityAttributes')
 
 const rarity = new Rarity()
 const gold = new RarityGold()
 const craftI = new RarityCraftingMaterials()
+const attributes = new RarityAttributes()
 
 async function adventure(account, hero, nonce = null) {
   logger.info(`${hero} adventure start (account ${account})`)
@@ -114,8 +120,43 @@ async function startClaimGold() {
   return claimGoldAll(AddressHeros)
 }
 
+async function assignAttribute(address, hero, validAttributes) {
+  try {
+    logger.info(`${hero} assign attribute start, account ${address}`)
+    const character_created = await attributes.character_created(hero)
+    if (character_created) {
+      logger.info(`${hero} assign attribute canceled, character already created`)
+      return
+    }
+    const attrs = validAttributes[Math.floor(Math.random() * validAttributes.length)]
+    await attributes.point_buy(address, hero, attrs)
+    logger.info(`${hero} assign attribute to ${attrs} complete`)
+  } catch (e) {
+    logger.error(`${hero} assign attribute error`, e)
+  }
+}
+
+function readValidAttributes() {
+  const data = fs.readFileSync(path.resolve(__dirname, 'ra_point_buy_inputs.txt'))
+  const lines = Buffer.from(data, 'binary').toString().split('\n')
+  return lines.map(line => line.trim().split(','))
+}
+
+async function startAssignAttributes() {
+  const AddressHeros = await loadAccounts()
+  logger.info('assignAttributeAll start')
+  const validAttributes = readValidAttributes()
+  for (const { address, heros } of AddressHeros) {
+    for (const hero of heros) {
+      await assignAttribute(address, hero, validAttributes)
+    }
+  }
+  logger.info('assignAttributeAll complete')
+}
+
 module.exports = {
   scheduleAdventure,
   startAdventure,
   startClaimGold,
+  startAssignAttributes,
 }

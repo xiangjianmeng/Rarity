@@ -15,6 +15,10 @@ function getCurrentPrice(web3) {
 
 class GasPriceCalculators {
 
+  static default() {
+    return GasPriceCalculators.withPassableLimit()
+  }
+
   static useCurrent() {
     return (web3, price) => getCurrentPrice(web3)
   }
