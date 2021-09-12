@@ -147,6 +147,10 @@ class EthereumManager {
     return Array.from(Array(wallet.length).keys()).map(i => wallet[i].address)
   }
 
+  transactionCount(address) {
+    return this.web3.eth.getTransactionCount(address)
+  }
+
   /**
    * send ether to another account
    * https://web3js.readthedocs.io/en/v1.5.2/web3-eth.html#sendtransaction
@@ -173,10 +177,11 @@ class EthereumManager {
    * }
    */
   async send(from, to, value, { gas, gasPrice, nonce } = { gas: 21000 }) {
-    gasPrice = await this.calcGasPrice(gasPrice)
     from = from || this.account
     if (!from) throw Error('From account is empty!')
     if (!to) throw Error('To account is empty!')
+    gasPrice = await this.calcGasPrice(gasPrice)
+    if (nonce === null || nonce === undefined) nonce = await this.transactionCount(from)
     console.log(`===> send ${value} ether from ${from} to ${to}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
     return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }

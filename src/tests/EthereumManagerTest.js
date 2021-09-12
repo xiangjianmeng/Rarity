@@ -1,6 +1,7 @@
 const path = require('path')
 const Providers = require('../base/Providers')
 const EthereumManager = require('../base/EthereumManager')
+const NumberUtils = require('../base/NumberUtils')
 
 const eth = new EthereumManager(Providers.rinkeby())
 
@@ -23,7 +24,10 @@ async function test() {
   }
   console.log('Account list', eth.accountList())
 
-  // eth.send(accounts[0].address, accounts[1].address, '1e17')
+  const count = await eth.transactionCount(accounts[0].address)
+  console.log(`transaction count = ${count}`)
+
+  // eth.send(accounts[0].address, accounts[1].address, '1e17') // 1e17 = 0.1Ether
   //   .then(console.log)
   //   .catch(console.error)
 }
