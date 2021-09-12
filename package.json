@@ -5,7 +5,7 @@
   "author": "jzj",
   "license": "MIT",
   "scripts": {
-    "start": "node src/rarity/scripts/schedule-adventual.js"
+    "start": "node src/rarity/scripts/schedule-adventure.js"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.1",
