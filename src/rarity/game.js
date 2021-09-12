@@ -70,33 +70,29 @@ async function collectCraftI(account, hero) {
   }
 }
 
-async function adventureAccount(account, heros) {
-  // run serial
-  for (const [index, hero] of heros.entries()) {
-    // TODO fix "nonce too low" issue and add nonce
-    await adventure(account, hero)
-    await claimGold(account, hero)
-    await collectCraftI(account, hero)
-  }
-  // run parallel
-  // try {
-  //   await Promise.map(heros, (hero, index) => {
-  //     return adventure(account, hero, index)
-  //   }, { concurrency: 20 }) // max about 70 transactions in one ethereum block
-  // } catch (e) {
-  //   console.error(`account ${account} adventure error`, e)
-  // }
-}
-
 async function adventureAll(AddressHeros) {
   console.log('adventureAll start')
   for (const { address, heros } of AddressHeros) {
-    await adventureAccount(address, heros)
+    for (const hero of heros) {
+      await adventure(address, hero)
+      await collectCraftI(address, hero)
+    }
   }
   console.log('adventureAll complete')
 }
 
-async function scheduleAdventure(AddressHeros) {
+async function claimGoldAll(AddressHeros) {
+  console.log('claimGoldAll start')
+  for (const { address, heros } of AddressHeros) {
+    for (const hero of heros) {
+      await claimGold(address, hero)
+    }
+  }
+  console.log('claimGoldAll complete')
+}
+
+async function scheduleAdventure() {
+  const AddressHeros = await loadAccounts()
   const CronJob = require('cron').CronJob;
   // second minute hour dayOfMonth month dayOfWeek
   const cron = '0 0 * * * *' // try every 1 hour
@@ -107,17 +103,18 @@ async function scheduleAdventure(AddressHeros) {
   console.log(`scheduled ${cron}`)
 }
 
-async function schedule() {
+async function startAdventure() {
   const AddressHeros = await loadAccounts()
-  scheduleAdventure(AddressHeros)
+  return adventureAll(AddressHeros)
 }
 
-async function adventureNow() {
+async function startClaimGold() {
   const AddressHeros = await loadAccounts()
-  adventureAll(AddressHeros)
+  return claimGoldAll(AddressHeros)
 }
 
 module.exports = {
-  schedule,
-  adventureNow,
+  scheduleAdventure,
+  startAdventure,
+  startClaimGold,
 }

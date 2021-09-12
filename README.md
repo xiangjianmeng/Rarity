@@ -37,7 +37,7 @@ https://ftmscan.com/address/0x123xxx456#tokentxnsErc721
 "0xac...","1630...","2021-09-05 13:00:00","0x0000000000000000000000000000000000000000","0x36...","0xce761d788df608bd21bdd59d6f4b54b2e27f25bb","00001","Rarity Manifested","RM"
 ```
 
-5、立即执行一次adventure：运行 `yarn startNow` 或者 `node src/index_now.js`
+5、立即执行一次adventure：运行 `src/rarity/scripts/start-adventure.js`
 
 6、常驻后台，自动执行adventure：
 
@@ -62,19 +62,25 @@ Windows系统：直接运行 `yarn start`，保持命令行窗口始终开启
 
 以下脚本已经过测试可用。还不放心的话，可以先看下源码，找少量账号先测试一下，确认无误后再使用更多号。
 
-创建账号
+批量创建账号
 - 参数: 创建账号数量，输出账号列表
 ```
 node src/scripts/batch-create-accounts.js 10 accounts.json
 ```
 
-FTM转账
+批量查看FTM余额
+- 参数：账号列表
+```
+node src/scripts/batch-check-ether.js secrets/rarity-accounts.json
+```
+
+批量FTM转账
 - 参数：转出账号(使用列表中的第一个)，转入账号列表，每个账号转账FTM数量
 ```
 node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18
 ```
 
-创建英雄
+批量创建英雄
 - 参数：账号列表，每个账号英雄数量（默认会按class=1-11循环，建议数量设置为11的倍数）
 ```
 node src/rarity/scripts/batch-create-heros.js accounts.json 11
@@ -84,12 +90,6 @@ node src/rarity/scripts/batch-create-heros.js accounts.json 11
 - 参数：账号列表(列表中包含了指定的账号即可)，指定账号地址，英雄的class
 ```
 node src/rarity/scripts/manually-create-hero.js accounts.json 0x123...456 5
-```
-
-检查FTM余额
-- 参数：账号列表
-```
-node src/scripts/batch-check-ether.js secrets/rarity-accounts.json
 ```
 
 ## 常见问题

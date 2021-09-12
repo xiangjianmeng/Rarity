@@ -5,8 +5,7 @@
   "author": "jzj",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
-    "startNow": "node src/index_now.js"
+    "start": "node src/rarity/scripts/schedule-adventual.js"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.3.1",
