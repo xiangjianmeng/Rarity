@@ -5,6 +5,7 @@
  */
 const path = require('path')
 const GasPriceCalculators = require('../../base/GasPriceCalculators')
+const logger = require('../../base/logger')
 const Rarity = require('../Rarity')
 const { rarityEth } = require('../RarityEthereumManager')
 const rarity = new Rarity()
@@ -12,11 +13,11 @@ const rarity = new Rarity()
 rarityEth.setGasPriceCalculator(GasPriceCalculators.withDefaultPassable())
 
 async function main() {
-  console.log(process.argv)
+  logger.info(process.argv)
 
   if (process.argv.length != 5) {
-    console.log('Usage:   node src/rarity/scripts/manually-create-hero.js ACCOUNT_LIST_JSON_FILE ADDRESS class')
-    console.log('Example: node src/rarity/scripts/manually-create-hero.js secrets/accounts.json 0x123...456 5')
+    logger.info('Usage:   node src/rarity/scripts/manually-create-hero.js ACCOUNT_LIST_JSON_FILE ADDRESS class')
+    logger.info('Example: node src/rarity/scripts/manually-create-hero.js secrets/accounts.json 0x123...456 5')
     return
   }
 
@@ -28,20 +29,20 @@ async function main() {
     if (address === account.address) {
       const importAddress = await rarityEth.addAccount(account.privateKey)
       if (address !== importAddress) {
-        console.error(`account import failed`)
+        logger.error(`account import failed`)
         return
       }
-      console.log(`mint hero with class ${heroClass} for account ${address}`)
+      logger.info(`mint hero with class ${heroClass} for account ${address}`)
       try {
         await rarity.summon(address, heroClass)
-        console.log('complete')
+        logger.info('complete')
       } catch (e) {
-        console.error(`mint hero failed`, e)
+        logger.error(`mint hero failed`, e)
       }
       return
     }
   }
-  console.log(`address not found in address json file`)
+  logger.info(`address not found in address json file`)
 }
 
 main()

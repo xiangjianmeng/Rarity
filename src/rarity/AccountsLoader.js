@@ -3,11 +3,12 @@ const path = require('path')
 const csv = require('csvtojson')
 const { rarityEth } = require('./RarityEthereumManager')
 const Rarity = require('./Rarity')
+const logger = require('../base/logger')
 
 const secretsDir = path.resolve(__dirname, '../../secrets/')
 
 async function loadAccounts() {
-  console.log('loadAccounts start')
+  logger.info('loadAccounts start')
   const AddressHeros = [] // [{ address, heros[] }]
   const accounts = require(path.resolve(secretsDir, 'rarity-accounts.json'))
   const files = fs.readdirSync(secretsDir)
@@ -24,10 +25,10 @@ async function loadAccounts() {
         AddressHeros.push({ address, heros })
       }
     } catch (e) {
-      console.error('load account error', e)
+      logger.error('load account error', e)
     }
   }
-  console.log('loadAccounts complete', AddressHeros)
+  logger.info('loadAccounts complete', AddressHeros)
   return AddressHeros
 }
 

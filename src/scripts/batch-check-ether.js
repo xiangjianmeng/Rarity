@@ -6,14 +6,15 @@
 const path = require('path')
 const Providers = require('../base/Providers')
 const EthereumManager = require('../base/EthereumManager')
+const logger = require('../base/logger')
 const eth = new EthereumManager(Providers.ftm(), null, null)
 
 async function main() {
-  console.log(process.argv)
+  logger.info(process.argv)
 
   if (process.argv.length != 3) {
-    console.log('Usage:   node src/scripts/batch-check-ether.js ACCOUNT_LIST_JSON_FILE')
-    console.log('Example: node src/scripts/batch-check-ether.js accounts.json')
+    logger.info('Usage:   node src/scripts/batch-check-ether.js ACCOUNT_LIST_JSON_FILE')
+    logger.info('Example: node src/scripts/batch-check-ether.js accounts.json')
     return
   }
 
@@ -21,7 +22,7 @@ async function main() {
 
   for (const account of accounts) {
     const balance = await eth.balance(account.address, true)
-    console.log(`account ${account.address} balance is ${balance} Ether`)
+    logger.info(`account ${account.address} balance is ${balance} Ether`)
   }
 }
 

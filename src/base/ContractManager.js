@@ -1,8 +1,9 @@
 const Web3 = require('web3')
 const EthereumManager = require('./EthereumManager')
+const logger = require('./logger')
 
 const debug = () => { }
-// const debug = console.log
+// const debug = logger.info
 
 /**
  * General ethereum contract manager
@@ -88,7 +89,7 @@ class ContractManager {
     if (!account) throw Error('Account is empty!')
     gasPrice = await this.ethereumManager.calcGasPrice(gasPrice)
     if (nonce === null || nonce === undefined) nonce = await this.transactionCount(account)
-    console.log(`===> write contract ${this.contractAddress} from ${account}, value: ${value}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
+    logger.info(`===> write contract ${this.contractAddress} from ${account}, value: ${value}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
     const r = await this.contract.methods[method](params).send({ from: account, gas, gasPrice, value, nonce })
     debug('write method =', method, 'result =', r)
     return r

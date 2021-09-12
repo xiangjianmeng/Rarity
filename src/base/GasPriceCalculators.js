@@ -2,6 +2,7 @@
  * Calculate gas price
  */
 
+const logger = require("./logger")
 const NumberUtils = require("./NumberUtils")
 
 /**
@@ -35,11 +36,11 @@ class GasPriceCalculators {
       const currentPrice = await getCurrentPrice(web3)
       // try maxPrice and wait, web3 will wait with transactionPollingTimeout
       if (NumberUtils.gt(currentPrice, maxPrice)) {
-        console.log(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
+        logger.info(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
         return maxPrice
       }
       // use currentPrice
-      console.log(`use current gas price ${currentPrice}`)
+      logger.info(`use current gas price ${currentPrice}`)
       return currentPrice
     }
   }
@@ -58,11 +59,11 @@ class GasPriceCalculators {
       }
       // try maxPrice and wait, web3 will wait with transactionPollingTimeout
       if (NumberUtils.gt(currentPrice, maxPrice)) {
-        console.log(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
+        logger.info(`current gas price is ${currentPrice}, try to use ${maxPrice}`)
         return maxPrice
       }
       // use currentPrice
-      console.log(`use current gas price ${currentPrice}`)
+      logger.info(`use current gas price ${currentPrice}`)
       return currentPrice
     }
   }
@@ -82,7 +83,7 @@ class GasPriceCalculators {
         throw Error(`passable gas price is ${passablePrice} > ${abortPrice}, abort transaction`)
       }
       // use passablePrice
-      console.log(`use passable gas price ${passablePrice}`)
+      logger.info(`use passable gas price ${passablePrice}`)
       return passablePrice
     }
   }

@@ -1,7 +1,8 @@
 const Web3 = require('web3')
+const logger = require('./logger')
 
 const debug = () => { }
-// const debug = console.log
+// const debug = logger.info
 
 /**
  * General ethereum manager
@@ -182,7 +183,7 @@ class EthereumManager {
     if (!to) throw Error('To account is empty!')
     gasPrice = await this.calcGasPrice(gasPrice)
     if (nonce === null || nonce === undefined) nonce = await this.transactionCount(from)
-    console.log(`===> send ${value} ether from ${from} to ${to}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
+    logger.info(`===> send ${value} ether from ${from} to ${to}, gasLimit: ${gas}, gasPrice: ${gasPrice}, nonce: ${nonce}`)
     return this.web3.eth.sendTransaction({ from, to, value, gas, gasPrice, nonce })
   }
 

@@ -7,14 +7,15 @@ const path = require('path')
 const BigNumber = require('bignumber.js')
 const Providers = require('../base/Providers')
 const EthereumManager = require('../base/EthereumManager')
+const logger = require('../base/logger')
 const eth = new EthereumManager(Providers.ftm(), null, null)
 
 async function main() {
-  console.log(process.argv)
+  logger.info(process.argv)
 
   if (process.argv.length != 5) {
-    console.log('Usage:   node src/scripts/batch-transfer-ether.js SRC_ACCOUNT DST_ACCOUNT_LIST ETHER_IN_WEI')
-    console.log('Example: node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18')
+    logger.info('Usage:   node src/scripts/batch-transfer-ether.js SRC_ACCOUNT DST_ACCOUNT_LIST ETHER_IN_WEI')
+    logger.info('Example: node src/scripts/batch-transfer-ether.js src-account.json dst-accounts.json 5e18')
     return
   }
 
@@ -28,10 +29,10 @@ async function main() {
   const value = BigNumber(process.argv[4])
 
   for (const account of dstAccounts) {
-    console.log(`send ${value} wei from ${srcAccount} to ${account.address} ...`)
+    logger.info(`send ${value} wei from ${srcAccount} to ${account.address} ...`)
     await eth.send(srcAccount, account.address, value)
   }
-  console.log('complete')
+  logger.info('complete')
 }
 
 main()
